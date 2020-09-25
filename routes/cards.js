@@ -15,19 +15,19 @@ router.get('/', getCards);
 router.delete('/:cardId', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().min(24).max(24)
-      .pattern(/[a-f0-9]/),
+      .pattern(/[a-f0-9]{24}/),
   }),
 }), deleteCard);
 router.put('/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().min(24).max(24)
-      .pattern(/[a-f0-9]/),
+      .pattern(/[a-f0-9]{24}/),
   }),
 }), likeCard);
 router.delete('/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().min(24).max(24)
-      .pattern(/[a-f0-9]/),
+      .pattern(/[a-f0-9]{24}/),
   }),
 }), dislikeCard);
 

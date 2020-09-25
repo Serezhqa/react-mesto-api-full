@@ -4,10 +4,13 @@ const User = require('../models/user');
 const ValidationError = require('../errors/validation-error');
 const NotFoundError = require('../errors/not-found-error');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name,
@@ -16,10 +19,23 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((result) => res.send({ data: result }))
+    .then((result) => res.send({
+      data: {
+        _id: result._id,
+        name: result.name,
+        about: result.about,
+        avatar: result.avatar,
+        email: result.email,
+        __v: result.__v,
+      },
+    }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ValidationError(error.message));
+      } else if (error.name === 'MongoError' && error.code === 11000) {
+        const err = new Error('Пользователь с таким email уже зарегистрирован');
+        err.statusCode = 409;
+        next(err);
       }
 
       next(error);
@@ -31,7 +47,7 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, '42672c1e982828bee6a455759a41b1202afdd6ee4f489affa90795486df046a5', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'Eyjafjallajökull', { expiresIn: '7d' });
       res.send(token);
     })
     .catch(next);

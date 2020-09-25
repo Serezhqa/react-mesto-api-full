@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -64,6 +65,8 @@ app.use((err, req, res, next) => {
       ? 'На сервере произошла ошибка'
       : message,
   });
+
+  next();
 });
 
 app.listen(PORT);

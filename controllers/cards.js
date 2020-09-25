@@ -22,13 +22,18 @@ const getCards = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((result) => {
-      if (!result) {
+  Card.find({ _id: req.params.cardId })
+    .then((card) => {
+      if (card.length === 0) {
         throw new NotFoundError('Карточка не найдена');
+      } else if (card[0].owner.toString() !== req.user._id) {
+        const err = new Error('Недостаточно прав для совершения действия');
+        err.statusCode = 403;
+        throw err;
+      } else {
+        Card.findByIdAndRemove(req.params.cardId)
+          .then((result) => res.send({ data: result }));
       }
-
-      res.send({ data: result });
     })
     .catch(next);
 };
