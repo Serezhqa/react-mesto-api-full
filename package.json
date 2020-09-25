@@ -10,9 +10,15 @@
   "author": "Sergey Podryabinnikov",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "celebrate": "^13.0.3",
     "express": "^4.17.1",
-    "mongoose": "^5.10.0"
+    "express-winston": "^4.0.5",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.0",
+    "validator": "^13.1.17",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "eslint": "^7.7.0",
